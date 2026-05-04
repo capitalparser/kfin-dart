@@ -216,3 +216,13 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Rust / Cargo
+**/*.rs.bk
+*.pdb
+
+# maturin / cibuildwheel
+wheelhouse/
+
+# DART fixture caches (real disclosures must not be committed casually)
+tests/fixtures/_cache/

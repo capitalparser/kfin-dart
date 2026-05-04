@@ -1,0 +1,51 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: python (${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install build tools
+        run: pip install --upgrade pip maturin
+      - name: Build native extension and install dev deps
+        run: maturin develop --extras dev
+      - name: Lint
+        run: ruff check .
+      - name: Test
+        run: pytest -v
+
+  rust:
+    name: rust (cargo)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: cargo fmt
+        working-directory: kfin_dart_rs
+        run: cargo fmt --check
+      - name: cargo clippy
+        working-directory: kfin_dart_rs
+        run: cargo clippy --all-targets -- -D warnings
+      - name: cargo test
+        working-directory: kfin_dart_rs
+        run: cargo test

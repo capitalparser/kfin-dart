@@ -1,0 +1,14 @@
+[package]
+name = "kfin_dart_rs"
+version = "0.0.1"
+edition = "2021"
+license = "AGPL-3.0-only"
+description = "Performance-critical native module for kfin-dart"
+repository = "https://github.com/capitalparser/kfin-dart"
+
+[lib]
+name = "kfin_dart_rs"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+pyo3 = { version = "0.22", features = ["extension-module"] }
